@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  name: opentsdb
+spec:
+  type: NodePort
+  ports:
+    - port: 4242
+      protocol: TCP
+      targetPort: 4242
+      nodePort: 30787
+  selector:
+    run: opentsdb
+status:
+  loadBalancer: {}
+---
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    run: opentsdb
+  name: opentsdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: opentsdb
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: opentsdb
+    spec:
+      containers:
+        - image: petergrace/opentsdb-docker
+          name: opentsdb
+          ports:
+            - containerPort: 4242
+              name: tsdbport
+            - containerPort: 60030
+              name: tsdbportother
+          resources: {}
+          env:
+            - name: WAITSECS
+              value: "30"
+          volumeMounts:
+            - mountPath: /data/hbase
+              name: tsdb-data-volume
+      volumes:
+        - name: tsdb-data-volume
+          hostPath:
+            # directory location on host
+            path: /tmp/docker-tsdb
+            # this field is optional
+            type: Directory
+status: {}
+
