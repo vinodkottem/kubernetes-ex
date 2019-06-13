@@ -13,7 +13,7 @@ kubectl create -f tsdb.yaml
 
 cd scollector
 
-wget https://github.com/bosun-monitor/bosun/releases/download/0.8.0-preview/tsdbrelay-darwin-amd64
+wget https://github.com/bosun-monitor/bosun/releases/download/0.8.0-preview/scollector-darwin-amd64 -O scollector
 
 scollector -conf conf.toml
 ```
